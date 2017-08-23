@@ -1,5 +1,6 @@
 package com.zhiyuan3g.androidweather;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +14,17 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.zhiyuan3g.androidweather.db.ProvinceDB;
+import com.zhiyuan3g.androidweather.entity.ProvinceEntity;
 import com.zhiyuan3g.androidweather.fragment.fragment_province;
+import com.zhiyuan3g.androidweather.utils.OkHttpCallBack;
+import com.zhiyuan3g.androidweather.utils.OkHttpUtils;
+
+import org.litepal.tablemanager.Connector;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,9 +46,46 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Connector.getDatabase();
         initView();
         initToolBar();
         drawerLayout.addDrawerListener(this);
+        initSp();
+    }
+
+    private void initSp() {
+        SharedPreferences sharedPreferences = getSharedPreferences("Cool", MODE_PRIVATE);
+        boolean spIsOk = sharedPreferences.getBoolean("spIsOK", false);
+        if (!spIsOk) {
+            initHttp();
+        }
+    }
+
+    private void initHttp() {
+        OkHttpUtils.sendRequestGETMethod(this, "http://guolin.tech/api/china", new OkHttpCallBack() {
+            @Override
+            public void Success(String result) {
+                System.out.println(result);
+                Gson gson = new Gson();
+                List<ProvinceEntity> ProvinceList = gson.fromJson(result, new TypeToken<List<ProvinceEntity>>() {
+                }.getType());
+                for (ProvinceEntity entity : ProvinceList) {
+                    ProvinceDB provinceDB = new ProvinceDB();
+                    provinceDB.setId(entity.getId());
+                    provinceDB.setName(entity.getName());
+                    provinceDB.save();
+                }
+                SharedPreferences sharedPreferences = getSharedPreferences("Cool", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("spIsOk", true);
+                editor.apply();
+            }
+
+            @Override
+            public void Failure(String failure) {
+
+            }
+        });
     }
 
 
@@ -87,6 +135,15 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             transaction.replace(R.id.frame_change, new fragment_province());
             transaction.commit();
             isOk = false;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 }
