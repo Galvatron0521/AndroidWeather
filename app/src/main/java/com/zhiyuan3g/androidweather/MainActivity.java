@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.zhiyuan3g.androidweather.base.ContractUtils;
 import com.zhiyuan3g.androidweather.db.ProvinceDB;
 import com.zhiyuan3g.androidweather.entity.ProvinceEntity;
 import com.zhiyuan3g.androidweather.fragment.fragment_province;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     }
 
     private void initHttp() {
-        OkHttpUtils.sendRequestGETMethod(this, "http://guolin.tech/api/china", new OkHttpCallBack() {
+        OkHttpUtils.sendRequestGETMethod(this, ContractUtils.URL_PROVINCE, new OkHttpCallBack() {
             @Override
             public void Success(String result) {
                 System.out.println(result);
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

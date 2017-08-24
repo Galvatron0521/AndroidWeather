@@ -3,6 +3,8 @@ package com.zhiyuan3g.androidweather.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +39,7 @@ public class fragment_province extends Fragment {
     RecyclerView recycler;
 
     private ProvinceAdapter provinceAdapter;
+    private List<ProvinceDB> all;
 
     @Nullable
     @Override
@@ -49,14 +52,30 @@ public class fragment_province extends Fragment {
     }
 
     private void initView() {
-        List<ProvinceDB> all = DataSupport.findAll(ProvinceDB.class);
+        all = DataSupport.findAll(ProvinceDB.class);
         provinceAdapter = new ProvinceAdapter(getActivity(), all);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(manager);
         recycler.setAdapter(provinceAdapter);
+        provinceAdapter.setOnItemClick(new ProvinceAdapter.onItemClick() {
+            @Override
+            public void onItemClick(int position) {
+                fragment_city fragment_city = new fragment_city();
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",all.get(position).getId());
+                bundle.putString("name",all.get(position).getName());
+                fragment_city.setArguments(bundle);
+
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.frame_change,fragment_city);
+                transaction.commit();
+            }
+        });
     }
 
     private void initToolBar() {
+        setHasOptionsMenu(true);
         ((AppCompatActivity) getActivity()).setSupportActionBar(provinceToolbar);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {

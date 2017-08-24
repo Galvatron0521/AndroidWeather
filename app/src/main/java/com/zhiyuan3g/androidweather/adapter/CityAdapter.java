@@ -8,39 +8,37 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zhiyuan3g.androidweather.R;
-import com.zhiyuan3g.androidweather.db.ProvinceDB;
+import com.zhiyuan3g.androidweather.db.CityDB;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 /**
  * Created by Administrator on 2017/8/23.
  */
 
-public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHolder> {
+public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
 
     private Context context;
-    private List<ProvinceDB> ProvinceDBList;
+    private List<CityDB> cityDBList;
 
     private onItemClick onItemClick;
 
-    public void setOnItemClick(onItemClick onItemClick) {
+    public void setOnItemClick(CityAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
-    }
-
-    public ProvinceAdapter(Context context, List<ProvinceDB> ProvinceDBList) {
-        this.context = context;
-        this.ProvinceDBList = ProvinceDBList;
     }
 
     public interface onItemClick {
         void onItemClick(int position);
     }
 
+    public CityAdapter(Context context, List<CityDB> cityDBList) {
+        this.context = context;
+        this.cityDBList = cityDBList;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -55,20 +53,20 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
         return viewHolder;
     }
 
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvName.setText(ProvinceDBList.get(position).getName());
+        holder.tvName.setText(cityDBList.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return ProvinceDBList.size();
+        return cityDBList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_name)
         TextView tvName;
-
         private View view;
 
         public ViewHolder(View itemView) {

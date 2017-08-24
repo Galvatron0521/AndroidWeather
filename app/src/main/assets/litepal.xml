@@ -4,5 +4,7 @@
     <version value="1" />
     <list>
         <mapping class="com.zhiyuan3g.androidweather.db.ProvinceDB" />
+        <mapping class="com.zhiyuan3g.androidweather.db.CityDB"/>
+        <mapping class="com.zhiyuan3g.androidweather.db.CountryDB"/>
     </list>
 </litepal>
